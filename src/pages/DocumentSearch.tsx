@@ -2,6 +2,7 @@ import { Banner } from "@/components/Banner";
 import { Footer } from "@/components/Footer";
 import { DocumentSearchHero } from "@/components/DocumentSearchHero";
 import { DocumentChat } from "@/components/DocumentChat";
+import { Features } from "@/components/Features";
 
 const DocumentSearch = () => {
   return (
@@ -11,6 +12,7 @@ const DocumentSearch = () => {
         <Banner />
         <DocumentSearchHero />
         <DocumentChat />
+        <Features />
         <Footer />
       </div>
     </div>

@@ -39,11 +39,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 
         return textParts.map((textPart, textIndex) => {
           if (textIndex % 2 === 1) {
+            // Apply the icon color from settings
             const iconProps = {
               className: "inline-block h-4 w-4 mx-1",
               color: settings.iconColor
             };
 
+            // Handle different icon types
             switch (textPart) {
               case 'link':
                 return <Link key={`${index}-${textIndex}`} {...iconProps} />;
@@ -54,6 +56,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             }
           }
 
+          // Handle markdown-style links
           const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
           const linkParts = textPart.split(linkRegex);
           
