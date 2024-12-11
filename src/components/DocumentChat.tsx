@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send, FileText, AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "./ui/use-toast";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -16,16 +17,34 @@ const examplePrompts = [
   "ما هي خطوات استخراج عقد الازدياد؟"
 ];
 
+const isDocumentRelatedQuery = (query: string): boolean => {
+  const documentKeywords = [
+    'وثيقة', 'بطاقة', 'جواز', 'رخصة', 'شهادة', 'عقد',
+    'استخراج', 'تجديد', 'الحصول', 'طلب', 'تسجيل'
+  ];
+  return documentKeywords.some(keyword => query.includes(keyword));
+};
+
 export function DocumentChat() {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !apiKey) return;
+
+    if (!isDocumentRelatedQuery(input)) {
+      toast({
+        title: "تنبيه",
+        description: "الرجاء طرح أسئلة تتعلق بالوثائق والمستندات الحكومية فقط",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const userMessage = { role: 'user' as const, content: input };
     setMessages(prev => [...prev, userMessage]);
@@ -43,7 +62,7 @@ export function DocumentChat() {
           messages: [
             {
               role: "system",
-              content: "You are an Arabic-speaking assistant specialized in guiding users through the process of obtaining various Moroccan government documents. Your responses should be clear, informative, and structured in a newsletter-style format with visually engaging elements, like bullet points, icons, and headings. You will provide detailed steps and documents required for the user's request, as well as any relevant information about timeframes, locations, and additional notes. Your language should be friendly, concise, and professional."
+              content: "You are an Arabic-speaking assistant specialized in guiding users through the process of obtaining various Moroccan government documents. Your responses should be clear, informative, and structured in a newsletter-style format with visually engaging elements, like bullet points, icons, and headings. You will provide detailed steps and documents required for the user's request, as well as any relevant information about timeframes, locations, and additional notes. Your language should be friendly, concise, and professional. Use appropriate emojis and icons to make the content more engaging. When possible, include relevant links to official government portals or resources."
             },
             ...messages,
             userMessage
@@ -59,6 +78,11 @@ export function DocumentChat() {
       }
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء معالجة طلبك. الرجاء المحاولة مرة أخرى",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +107,15 @@ export function DocumentChat() {
                     }`}
                     dir="rtl"
                   >
-                    <p className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']">{message.content}</p>
+                    {message.role === 'user' ? (
+                      <div className="flex items-start gap-2">
+                        <FileText className="h-5 w-5" />
+                        <p className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']">{message.content}</p>
+                      </div>
+                    ) : (
+                      <div className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']" 
+                           dangerouslySetInnerHTML={{ __html: message.content }} />
+                    )}
                   </div>
                 </div>
               ))}
@@ -116,6 +148,7 @@ export function DocumentChat() {
         <div className="md:col-span-1 space-y-6">
           <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
             <h3 className="text-lg font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic']" dir="rtl">
+              <AlertTriangle className="inline-block h-5 w-5 ml-2" />
               مفتاح API
             </h3>
             <Input
@@ -129,6 +162,7 @@ export function DocumentChat() {
           </div>
           <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
             <h3 className="text-lg font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic']" dir="rtl">
+              <MessageSquare className="inline-block h-5 w-5 ml-2" />
               أمثلة على الأسئلة
             </h3>
             <div className="space-y-3">
@@ -139,7 +173,7 @@ export function DocumentChat() {
                   onClick={() => setInput(prompt)}
                 >
                   <p className="text-moroccan-charcoal font-['Noto_Naskh_Arabic']" dir="rtl">
-                    <MessageSquare className="inline-block h-4 w-4 ml-2" />
+                    <FileText className="inline-block h-4 w-4 ml-2" />
                     {prompt}
                   </p>
                 </div>
