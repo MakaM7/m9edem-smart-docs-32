@@ -1,57 +1,83 @@
 import React from 'react';
 import { Link, MapPin } from 'lucide-react';
 import { useChatSettings } from '@/contexts/ChatSettingsContext';
+import { DocumentReference } from '../chat/DocumentReference';
 
 interface ChatMessageProps {
   content: string;
   isUser: boolean;
+  onDocumentSearch?: (document: string) => void;
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ content, isUser }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ 
+  content, 
+  isUser,
+  onDocumentSearch = () => {} 
+}) => {
   const { settings } = useChatSettings();
 
   const renderContent = (text: string) => {
-    const iconRegex = /{{([\w-]+)}}/g;
-    const parts = text.split(iconRegex);
+    // First, handle document references with regex
+    const documentRegex = /(رخصة|بطاقة|جواز|عقد|شهادة)\s([^\n.,!?]*)/g;
+    const parts = text.split(documentRegex);
 
     return parts.map((part, index) => {
-      if (index % 2 === 1) {
-        const iconProps = {
-          className: "inline-block h-4 w-4 mx-1",
-          color: settings.iconColor
-        };
+      // If this part matches our document types (index % 3 === 1), render it as a document reference
+      if (index % 3 === 1 && parts[index + 1]) {
+        const fullDocument = `${part}${parts[index + 1]}`;
+        return (
+          <DocumentReference
+            key={index}
+            documentName={fullDocument}
+            onSearch={onDocumentSearch}
+          />
+        );
+      } else if (index % 3 === 0) {
+        // For non-document parts, handle icons and links
+        const iconRegex = /{{([\w-]+)}}/g;
+        const textParts = part.split(iconRegex);
 
-        switch (part) {
-          case 'link':
-            return <Link key={index} {...iconProps} />;
-          case 'map-pin':
-            return <MapPin key={index} {...iconProps} />;
-          default:
+        return textParts.map((textPart, textIndex) => {
+          if (textIndex % 2 === 1) {
+            const iconProps = {
+              className: "inline-block h-4 w-4 mx-1",
+              color: settings.iconColor
+            };
+
+            switch (textPart) {
+              case 'link':
+                return <Link key={`${index}-${textIndex}`} {...iconProps} />;
+              case 'map-pin':
+                return <MapPin key={`${index}-${textIndex}`} {...iconProps} />;
+              default:
+                return null;
+            }
+          }
+
+          const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+          const linkParts = textPart.split(linkRegex);
+          
+          return linkParts.map((linkPart, linkIndex) => {
+            if (linkIndex % 3 === 1) {
+              return (
+                <a
+                  key={`${index}-${textIndex}-${linkIndex}`}
+                  href={linkParts[linkIndex + 1]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-moroccan-blue hover:underline"
+                >
+                  {linkPart}
+                </a>
+              );
+            } else if (linkIndex % 3 === 0) {
+              return linkPart;
+            }
             return null;
-        }
+          });
+        });
       }
-
-      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-      const textParts = part.split(linkRegex);
-      
-      return textParts.map((textPart, textIndex) => {
-        if (textIndex % 3 === 1) {
-          return (
-            <a
-              key={`${index}-${textIndex}`}
-              href={textParts[textIndex + 1]}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-moroccan-blue hover:underline"
-            >
-              {textPart}
-            </a>
-          );
-        } else if (textIndex % 3 === 0) {
-          return textPart;
-        }
-        return null;
-      });
+      return null;
     });
   };
 
