@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useChatSettings } from '@/contexts/ChatSettingsContext';
 import { DocumentReference } from '../chat/DocumentReference';
 
@@ -33,7 +33,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           />
         );
       } else if (index % 3 === 0) {
-        // For non-document parts, handle icons and links
+        // For non-document parts, handle icons
         const iconRegex = /{{([\w-]+)}}/g;
         const textParts = part.split(iconRegex);
 
@@ -45,39 +45,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
               color: settings.iconColor
             };
 
-            // Handle different icon types
-            switch (textPart) {
-              case 'link':
-                return <Link key={`${index}-${textIndex}`} {...iconProps} />;
-              case 'map-pin':
-                return <MapPin key={`${index}-${textIndex}`} {...iconProps} />;
-              default:
-                return null;
-            }
-          }
-
-          // Handle markdown-style links
-          const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-          const linkParts = textPart.split(linkRegex);
-          
-          return linkParts.map((linkPart, linkIndex) => {
-            if (linkIndex % 3 === 1) {
-              return (
-                <a
-                  key={`${index}-${textIndex}-${linkIndex}`}
-                  href={linkParts[linkIndex + 1]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-moroccan-blue hover:underline"
-                >
-                  {linkPart}
-                </a>
-              );
-            } else if (linkIndex % 3 === 0) {
-              return linkPart;
+            // Handle map-pin icon
+            if (textPart === 'map-pin') {
+              return <MapPin key={`${index}-${textIndex}`} {...iconProps} />;
             }
             return null;
-          });
+          }
+          return textPart;
         });
       }
       return null;
