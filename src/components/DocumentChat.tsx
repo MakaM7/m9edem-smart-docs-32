@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { MessageSquare, Send, FileText, AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "./ui/use-toast";
+import { ChatMessage } from "./ui/chat-message";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -120,24 +121,16 @@ export function DocumentChat() {
                   key={index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div
-                    className={`max-w-[80%] p-4 rounded-lg ${
-                      message.role === 'user'
-                        ? 'bg-moroccan-blue text-white ml-4'
-                        : 'bg-moroccan-sand/20 text-moroccan-charcoal mr-4'
-                    }`}
-                    dir="rtl"
-                  >
-                    {message.role === 'user' ? (
+                  {message.role === 'user' ? (
+                    <div className="max-w-[80%] p-4 rounded-lg bg-moroccan-blue text-white ml-4">
                       <div className="flex items-start gap-2">
                         <FileText className="h-5 w-5" />
                         <p className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']">{message.content}</p>
                       </div>
-                    ) : (
-                      <div className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']" 
-                           dangerouslySetInnerHTML={{ __html: message.content }} />
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <ChatMessage content={message.content} isUser={false} />
+                  )}
                 </div>
               ))}
               {isLoading && (
@@ -205,4 +198,4 @@ export function DocumentChat() {
       </div>
     </div>
   );
-};
+}
