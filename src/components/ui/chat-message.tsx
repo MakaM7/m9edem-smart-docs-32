@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, MapPin } from 'lucide-react';
+import { useChatSettings } from '@/contexts/ChatSettingsContext';
 
 interface ChatMessageProps {
   content: string;
@@ -7,29 +8,34 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ content, isUser }) => {
+  const { settings } = useChatSettings();
+
   const renderContent = (text: string) => {
-    // Replace icon placeholders with actual Lucide icons
     const iconRegex = /{{([\w-]+)}}/g;
     const parts = text.split(iconRegex);
 
     return parts.map((part, index) => {
-      if (index % 2 === 1) { // This is an icon name
+      if (index % 2 === 1) {
+        const iconProps = {
+          className: "inline-block h-4 w-4 mx-1",
+          color: settings.iconColor
+        };
+
         switch (part) {
           case 'link':
-            return <Link key={index} className="inline-block h-4 w-4 mx-1" />;
+            return <Link key={index} {...iconProps} />;
           case 'map-pin':
-            return <MapPin key={index} className="inline-block h-4 w-4 mx-1" />;
+            return <MapPin key={index} {...iconProps} />;
           default:
             return null;
         }
       }
 
-      // Process markdown-style links
       const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
       const textParts = part.split(linkRegex);
       
       return textParts.map((textPart, textIndex) => {
-        if (textIndex % 3 === 1) { // Link text
+        if (textIndex % 3 === 1) {
           return (
             <a
               key={`${index}-${textIndex}`}
@@ -41,7 +47,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ content, isUser }) => 
               {textPart}
             </a>
           );
-        } else if (textIndex % 3 === 0) { // Regular text
+        } else if (textIndex % 3 === 0) {
           return textPart;
         }
         return null;
@@ -58,7 +64,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ content, isUser }) => 
       }`}
       dir="rtl"
     >
-      <div className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']">
+      <div className={`whitespace-pre-wrap font-['Noto_Naskh_Arabic'] ${settings.fontSize} ${settings.fontWeight}`}>
         {renderContent(content)}
       </div>
     </div>

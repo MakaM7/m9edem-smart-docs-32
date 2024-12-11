@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { MessageSquare, Send, FileText, AlertTriangle } from "lucide-react";
+import { MessageSquare, Send, FileText, AlertTriangle, Settings } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "./ui/use-toast";
 import { ChatMessage } from "./ui/chat-message";
+import { ChatSettingsPanel } from "./chat/ChatSettingsPanel";
+import { ChatSettingsProvider } from "@/contexts/ChatSettingsContext";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -111,91 +121,113 @@ export function DocumentChat() {
   };
 
   return (
-    <div className="container mx-auto px-4 pb-16">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2">
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 min-h-[600px] flex flex-col">
-            <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  {message.role === 'user' ? (
-                    <div className="max-w-[80%] p-4 rounded-lg bg-moroccan-blue text-white ml-4">
-                      <div className="flex items-start gap-2">
-                        <FileText className="h-5 w-5" />
-                        <p className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']">{message.content}</p>
+    <ChatSettingsProvider>
+      <div className="container mx-auto px-4 pb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-2">
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 min-h-[600px] flex flex-col">
+              <div className="flex justify-end mb-4">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle className="font-['Noto_Naskh_Arabic']" dir="rtl">إعدادات المحادثة</SheetTitle>
+                      <SheetDescription className="font-['Noto_Naskh_Arabic']" dir="rtl">
+                        قم بتخصيص مظهر المحادثة حسب تفضيلاتك
+                      </SheetDescription>
+                    </SheetHeader>
+                    <ChatSettingsPanel />
+                  </SheetContent>
+                </Sheet>
+              </div>
+              <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    {message.role === 'user' ? (
+                      <div className="max-w-[80%] p-4 rounded-lg bg-moroccan-blue text-white ml-4">
+                        <div className="flex items-start gap-2">
+                          <FileText className="h-5 w-5" />
+                          <p className="whitespace-pre-wrap font-['Noto_Naskh_Arabic']">{message.content}</p>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <ChatMessage content={message.content} isUser={false} />
-                  )}
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-moroccan-sand/20 text-moroccan-charcoal p-4 rounded-lg mr-4">
-                    <p className="font-['Noto_Naskh_Arabic']">جاري التحميل...</p>
+                    ) : (
+                      <ChatMessage content={message.content} isUser={false} />
+                    )}
                   </div>
-                </div>
-              )}
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-moroccan-sand/20 text-moroccan-charcoal p-4 rounded-lg mr-4">
+                      <p className="font-['Noto_Naskh_Arabic']">جاري التحميل...</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <form onSubmit={handleSubmit} className="flex gap-2">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder={language === 'ar' ? 'اكتب سؤالك هنا...' : 'Écrivez votre question ici...'}
+                  className="flex-1 font-['Noto_Naskh_Arabic']"
+                  dir="rtl"
+                />
+                <Button 
+                  type="submit" 
+                  className="bg-moroccan-blue hover:bg-moroccan-blue/90"
+                  disabled={!apiKey || isLoading}
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
+              </form>
             </div>
-            <form onSubmit={handleSubmit} className="flex gap-2">
+          </div>
+          
+          {/* API Key and Example Questions Section */}
+          <div className="md:col-span-1 space-y-6">
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic']" dir="rtl">
+                <AlertTriangle className="inline-block h-5 w-5 ml-2" />
+                مفتاح API
+              </h3>
               <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={language === 'ar' ? 'اكتب سؤالك هنا...' : 'Écrivez votre question ici...'}
-                className="flex-1 font-['Noto_Naskh_Arabic']"
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="أدخل مفتاح API الخاص بك"
+                className="font-['Noto_Naskh_Arabic']"
                 dir="rtl"
               />
-              <Button 
-                type="submit" 
-                className="bg-moroccan-blue hover:bg-moroccan-blue/90"
-                disabled={!apiKey || isLoading}
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            </form>
-          </div>
-        </div>
-        <div className="md:col-span-1 space-y-6">
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic']" dir="rtl">
-              <AlertTriangle className="inline-block h-5 w-5 ml-2" />
-              مفتاح API
-            </h3>
-            <Input
-              type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="أدخل مفتاح API الخاص بك"
-              className="font-['Noto_Naskh_Arabic']"
-              dir="rtl"
-            />
-          </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic']" dir="rtl">
-              <MessageSquare className="inline-block h-5 w-5 ml-2" />
-              أمثلة على الأسئلة
-            </h3>
-            <div className="space-y-3">
-              {examplePrompts.map((prompt, index) => (
-                <div
-                  key={index}
-                  className="p-3 bg-moroccan-sand/10 rounded-lg cursor-pointer hover:bg-moroccan-sand/20 transition-colors"
-                  onClick={() => setInput(prompt)}
-                >
-                  <p className="text-moroccan-charcoal font-['Noto_Naskh_Arabic']" dir="rtl">
-                    <FileText className="inline-block h-4 w-4 ml-2" />
-                    {prompt}
-                  </p>
-                </div>
-              ))}
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic']" dir="rtl">
+                <MessageSquare className="inline-block h-5 w-5 ml-2" />
+                أمثلة على الأسئلة
+              </h3>
+              <div className="space-y-3">
+                {examplePrompts.map((prompt, index) => (
+                  <div
+                    key={index}
+                    className="p-3 bg-moroccan-sand/10 rounded-lg cursor-pointer hover:bg-moroccan-sand/20 transition-colors"
+                    onClick={() => setInput(prompt)}
+                  >
+                    <p className="text-moroccan-charcoal font-['Noto_Naskh_Arabic']" dir="rtl">
+                      <FileText className="inline-block h-4 w-4 ml-2" />
+                      {prompt}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ChatSettingsProvider>
   );
 }
