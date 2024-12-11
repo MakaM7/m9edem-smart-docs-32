@@ -14,16 +14,16 @@ export function Hero() {
             className="w-24 h-24 md:w-32 md:h-32"
           />
           <div className="text-left">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-moroccan-blue" dir="rtl">
-              {language === 'ar' ? 'Lm9edem' : 'Lm9edem'}
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic'] tracking-wider" dir="rtl">
+              {language === 'ar' ? 'لمقدم' : 'لمقدم'}
             </h1>
-            <p className="text-xl md:text-2xl max-w-2xl text-moroccan-charcoal" dir="rtl">
+            <p className="text-xl md:text-2xl max-w-2xl text-moroccan-charcoal font-['Noto_Naskh_Arabic']" dir="rtl">
               {language === 'ar'
-                ? "حِلِّ جميع إجراءاتك الإدارية بسهولة وذكاء مع 'Lm9edem'، الوثائق في متناول يدك وبلمسة تقنية!"
-                : "Résolvez toutes vos démarches administratives facilement et intelligemment avec 'Lm9edem', vos documents à portée de main avec une touche technologique !"}
+                ? "حِلِّ جميع إجراءاتك الإدارية بسهولة وذكاء مع 'لمقدم'، الوثائق في متناول يدك وبلمسة تقنية!"
+                : "Résolvez toutes vos démarches administratives facilement et intelligemment avec 'لمقدم', vos documents à portée de main avec une touche technologique !"}
             </p>
             <Button 
-              className="mt-6 bg-moroccan-blue hover:bg-moroccan-blue/90 text-white text-lg px-8 py-3"
+              className="mt-6 bg-moroccan-blue hover:bg-moroccan-blue/90 text-white text-lg px-8 py-3 font-['Noto_Naskh_Arabic']"
               dir="rtl"
             >
               {language === 'ar' ? 'ابدأ الآن' : 'Commencer'}
