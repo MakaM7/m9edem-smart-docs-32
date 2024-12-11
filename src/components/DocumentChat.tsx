@@ -17,14 +17,6 @@ const examplePrompts = [
   "ما هي خطوات استخراج عقد الازدياد؟"
 ];
 
-const isDocumentRelatedQuery = (query: string): boolean => {
-  const documentKeywords = [
-    'وثيقة', 'بطاقة', 'جواز', 'رخصة', 'شهادة', 'عقد',
-    'استخراج', 'تجديد', 'الحصول', 'طلب', 'تسجيل'
-  ];
-  return documentKeywords.some(keyword => query.includes(keyword));
-};
-
 export function DocumentChat() {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -36,15 +28,6 @@ export function DocumentChat() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !apiKey) return;
-
-    if (!isDocumentRelatedQuery(input)) {
-      toast({
-        title: "تنبيه",
-        description: "الرجاء طرح أسئلة تتعلق بالوثائق والمستندات الحكومية فقط",
-        variant: "destructive",
-      });
-      return;
-    }
 
     const userMessage = { role: 'user' as const, content: input };
     setMessages(prev => [...prev, userMessage]);
@@ -62,7 +45,27 @@ export function DocumentChat() {
           messages: [
             {
               role: "system",
-              content: "You are an Arabic-speaking assistant specialized in guiding users through the process of obtaining various Moroccan government documents. Your responses should be clear, informative, and structured in a newsletter-style format with visually engaging elements, like bullet points, icons, and headings. You will provide detailed steps and documents required for the user's request, as well as any relevant information about timeframes, locations, and additional notes. Your language should be friendly, concise, and professional. Use appropriate emojis and icons to make the content more engaging. When possible, include relevant links to official government portals or resources."
+              content: `You are an Arabic-speaking assistant specialized in guiding users through the process of obtaining various Moroccan government documents. 
+              
+              IMPORTANT RULES:
+              1. ALWAYS respond in Arabic, regardless of the language used in the question
+              2. ONLY respond if the question is related to Moroccan government documents, procedures, or administrative processes. If the question is not related, respond with: "عذراً، يمكنني فقط المساعدة في الأسئلة المتعلقة بالوثائق والإجراءات الإدارية المغربية."
+              3. When mentioning icons, use the exact names from this list wrapped in double curly braces: {{check}}, {{info}}, {{alert-circle}}, {{link}}, {{clock}}, {{calendar}}, {{map-pin}}, {{document}}, {{file-text}}, {{user}}
+              
+              Your responses should be clear, informative, and structured in a newsletter-style format with:
+              - Bullet points
+              - Icons (using the names above)
+              - Clear headings
+              - Links to official portals when available
+              
+              You will provide:
+              1. Detailed steps
+              2. Required documents
+              3. Timeframes
+              4. Locations
+              5. Additional notes
+              
+              Your language should be friendly, concise, and professional.`
             },
             ...messages,
             userMessage
