@@ -41,6 +41,34 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const AuthenticatedRedirect = ({ children }: { children: React.ReactNode }) => {
+  const [session, setSession] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (session) {
+    return <Navigate to="/document-search" />;
+  }
+
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
@@ -50,13 +78,20 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/auth" element={<Auth />} />
+              <Route
+                path="/auth"
+                element={
+                  <AuthenticatedRedirect>
+                    <Auth />
+                  </AuthenticatedRedirect>
+                }
+              />
               <Route
                 path="/"
                 element={
-                  <ProtectedRoute>
+                  <AuthenticatedRedirect>
                     <Index />
-                  </ProtectedRoute>
+                  </AuthenticatedRedirect>
                 }
               />
               <Route

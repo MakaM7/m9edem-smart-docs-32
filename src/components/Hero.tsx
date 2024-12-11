@@ -1,8 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 export function Hero() {
   const { language } = useLanguage();
+  const navigate = useNavigate();
 
   return (
     <div className="relative h-[400px] bg-transparent">
@@ -25,6 +27,7 @@ export function Hero() {
             <Button 
               className="mt-8 bg-moroccan-blue hover:bg-moroccan-blue/90 text-white text-2xl px-12 py-4 font-['Noto_Naskh_Arabic']"
               dir="rtl"
+              onClick={() => navigate('/auth')}
             >
               {language === 'ar' ? 'ابدأ الآن' : 'Commencer'}
             </Button>
