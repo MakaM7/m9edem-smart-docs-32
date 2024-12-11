@@ -9,7 +9,7 @@ export function Hero() {
       <div className="relative container mx-auto px-4 py-16 flex flex-col items-center justify-center h-full text-white">
         <div className="flex items-center gap-8">
           <img
-            src="https://res.cloudinary.com/dkb1opktz/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1733892923/DALL_E_2024-12-11_05.55.07_-_A_modern_and_sleek_logo_for_an_app_called_Lm9edem_._The_design_should_be_inspired_by_Morocco_documents_and_AI._Incorporate_elements_like_the_Morocc_jph5l3.webp"
+            src="https://res.cloudinary.com/dkb1opktz/image/upload/v1733894266/c61e7b7f-705e-4002-a5ff-a035bdb47c32-removebg-preview_bdzqcq.png"
             alt="M9edem AI Logo"
             className="w-24 h-24 md:w-32 md:h-32"
           />
