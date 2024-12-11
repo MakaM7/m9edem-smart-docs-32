@@ -6,12 +6,15 @@ import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-moroccan-cream bg-site-pattern bg-fixed bg-cover bg-center backdrop-blur-[30px] flex flex-col">
-      <Banner />
-      <LanguageSwitcher />
-      <Hero />
-      <Features />
-      <Footer />
+    <div className="min-h-screen bg-gradient-main bg-fixed backdrop-blur-[30px] flex flex-col">
+      <div className="absolute inset-0 bg-white/30 backdrop-filter backdrop-blur-[30px]"></div>
+      <div className="relative z-10">
+        <Banner />
+        <LanguageSwitcher />
+        <Hero />
+        <Features />
+        <Footer />
+      </div>
     </div>
   );
 };

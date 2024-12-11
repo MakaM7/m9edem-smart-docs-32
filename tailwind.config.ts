@@ -61,8 +61,8 @@ export default {
         },
       },
       backgroundImage: {
+        "gradient-main": "linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)",
         "hero-pattern": "url('https://res.cloudinary.com/dkb1opktz/image/upload/v1733892219/4db49bc1-afec-40c6-acdf-6db0f9b9e818_e8zj49.jpg')",
-        "site-pattern": "url('https://res.cloudinary.com/dkb1opktz/image/upload/v1733892086/6fb1153d-ea30-43f4-94ec-10eac2e827b3_t7c8qs.jpg')",
       },
       borderRadius: {
         lg: "var(--radius)",
