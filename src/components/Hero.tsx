@@ -5,7 +5,7 @@ export function Hero() {
   const { language } = useLanguage();
 
   return (
-    <div className="relative h-[400px]">
+    <div className="relative h-[400px] bg-transparent">
       <div className="relative container mx-auto px-4 py-16 flex flex-col items-center justify-center h-full">
         <div className="flex items-center gap-8">
           <img

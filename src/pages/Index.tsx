@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-moroccan-cream flex flex-col">
+    <div className="min-h-screen bg-moroccan-cream bg-site-pattern bg-fixed bg-cover bg-center backdrop-blur-sm flex flex-col">
       <Banner />
       <LanguageSwitcher />
       <Hero />
