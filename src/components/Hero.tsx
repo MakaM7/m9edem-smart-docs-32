@@ -11,7 +11,7 @@ export function Hero() {
           <img
             src="https://res.cloudinary.com/dkb1opktz/image/upload/v1733894266/c61e7b7f-705e-4002-a5ff-a035bdb47c32-removebg-preview_bdzqcq.png"
             alt="M9edem AI Logo"
-            className="w-24 h-24 md:w-32 md:h-32"
+            className="w-72 h-72 md:w-96 md:h-96"
           />
           <div className="text-left">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-moroccan-blue font-['Noto_Naskh_Arabic'] tracking-wider" dir="rtl">
@@ -29,6 +29,11 @@ export function Hero() {
               {language === 'ar' ? 'ابدأ الآن' : 'Commencer'}
             </Button>
           </div>
+          <img
+            src="https://res.cloudinary.com/dkb1opktz/image/upload/v1733894266/c61e7b7f-705e-4002-a5ff-a035bdb47c32-removebg-preview_bdzqcq.png"
+            alt="M9edem AI Logo"
+            className="w-72 h-72 md:w-96 md:h-96"
+          />
         </div>
       </div>
     </div>
